@@ -1,8 +1,24 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
-EXPOSE 8080
-ARG APP_NAME="api-service"
-ARG APP_VERSION="0.0.1"
-ARG JAR_FILE="/build/libs/${APP_NAME}-${APP_VERSION}.jar"
+FROM openjdk:8-jdk-alpine as build
 
-COPY ${JAR_FILE} api-service.jar
-ENTRYPOINT ["java","-jar", "api-service.jar"]
+ENV MAVEN_VERSION 3.5.4
+ENV MAVEN_HOME /usr/lib/mvn
+ENV PATH $MAVEN_HOME/bin:$PATH
+RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    mv apache-maven-$MAVEN_VERSION /usr/lib/mvn
+
+WORKDIR /workspace/app
+
+COPY pom.xml .
+COPY src src
+RUN mvn install -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
+FROM openjdk:8-jdk-alpine
+ARG DEPENDENCY=/workspace/app/target/dependency
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.spring.sample.apiservice.ApiServiceApplication"]
+EXPOSE 8777
