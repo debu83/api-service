@@ -1,5 +1,5 @@
 FROM adoptopenjdk/openjdk11:alpine-jre
-EXPOSE 87777
+EXPOSE 8777
 ARG APP_NAME="api-service"
 ARG APP_VERSION="0.0.1"
 ARG JAR_FILE="/build/libs/${APP_NAME}-${APP_VERSION}.jar"
