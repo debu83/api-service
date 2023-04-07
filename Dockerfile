@@ -1,8 +1,14 @@
+# Fetching latest version of Java
 FROM adoptopenjdk/openjdk11:alpine-jre
-EXPOSE 8777
-ARG APP_NAME="api-service"
-ARG APP_VERSION="0.0.1"
-ARG JAR_FILE="/build/libs/${APP_NAME}-${APP_VERSION}.jar"
+ 
+# Setting up work directory
+WORKDIR /app
 
-COPY ${JAR_FILE} api-service.jar
-ENTRYPOINT ["java","-jar", "api-service.jar"]
+# Copy the jar file into our app
+COPY ./target/api-service-0.0.1-SNAPSHOT.jar /app
+
+# Exposing port 8777
+EXPOSE 8777
+
+# Starting the application
+CMD ["java", "-jar", "api-service-0.0.1-SNAPSHOT.jar"]
