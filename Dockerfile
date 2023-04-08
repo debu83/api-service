@@ -1,14 +1,6 @@
 # Fetching latest version of Java
-FROM adoptopenjdk/openjdk11:alpine-jre
+FROM eclipse-temurin:17-jdk-alpine
  
-# Setting up work directory
-WORKDIR /app
-
-# Copy the jar file into our app
-COPY ./target/api-service-0.0.1-SNAPSHOT.jar /app
-
-# Exposing port 8777
-EXPOSE 8777
-
-# Starting the application
-ENTRYPOINT ["java", "-jar", "api-service-0.0.1-SNAPSHOT.jar"]
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
