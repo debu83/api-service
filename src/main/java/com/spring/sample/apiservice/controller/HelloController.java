@@ -10,4 +10,14 @@ public class HelloController {
     public String hello() {
         return "Hello I am healthy !!";
     }
+	
+	@GetMapping("/home")
+    public String home() {
+        return "Hello this is our home page!!";
+    }
+	
+	@GetMapping("/about")
+    public String about() {
+        return "Hello this is our about page !!";
+    }
 }
